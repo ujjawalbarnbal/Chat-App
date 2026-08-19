@@ -2,6 +2,7 @@ import { useChatStore } from "../store/useChatStore.js";
 import Sidebar from "../components/Sidebar.jsx";
 import ChatContainer from "../components/ChatContainer.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const { selectedUser } = useChatStore();
@@ -13,6 +14,9 @@ const HomePage = () => {
         <span className="font-bold">Chatty</span>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600">{authUser?.fullName}</span>
+          <Link to="/profile" className="text-sm text-blue-600 hover:underline">
+            Profile
+          </Link>
           <button
             onClick={logout}
             className="text-sm bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700"
