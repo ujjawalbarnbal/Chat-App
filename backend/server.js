@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
+import authRoutes from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -19,6 +21,8 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use("/api/auth", authRoutes);
 
 // Basic test route
 app.get("/", (req, res) => {
