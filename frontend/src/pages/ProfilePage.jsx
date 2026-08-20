@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Camera } from "lucide-react";
 
 const ProfilePage = () => {
   const { authUser, updateProfile, isUpdatingProfile } = useAuthStore();
@@ -20,47 +22,54 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md text-center">
-        <h2 className="text-2xl font-bold mb-6">Profile</h2>
+    <div className="min-h-screen bg-[#f0f2f0] px-4 py-8">
+      <div className="max-w-md mx-auto">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6">
+          <ArrowLeft className="w-4 h-4" />
+          Back to chats
+        </Link>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <img
-              src={selectedImg || authUser?.profilePic || "/avatar.png"}
-              alt="Profile"
-              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-            />
-            <label
-              htmlFor="avatar-upload"
-              className={`absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 p-2 rounded-full cursor-pointer text-white text-xs ${
-                isUpdatingProfile ? "opacity-50 pointer-events-none" : ""
-              }`}
-            >
-              {isUpdatingProfile ? "..." : "Edit"}
-              <input
-                type="file"
-                id="avatar-upload"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={isUpdatingProfile}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+          <h2 className="text-lg font-semibold text-gray-800 mb-6">Your Profile</h2>
+
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative">
+              <img
+                src={selectedImg || authUser?.profilePic || "/avatar.png"}
+                alt="Profile"
+                className="w-28 h-28 rounded-full object-cover border-4 border-[#e9f5f0]"
               />
-            </label>
+              <label
+                htmlFor="avatar-upload"
+                className={`absolute bottom-0 right-0 bg-[#075E54] hover:bg-[#064840] w-9 h-9 rounded-full cursor-pointer text-white flex items-center justify-center transition-colors ${
+                  isUpdatingProfile ? "opacity-50 pointer-events-none" : ""
+                }`}
+              >
+                <Camera className="w-4 h-4" />
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUpdatingProfile}
+                />
+              </label>
+            </div>
+            <p className="text-xs text-gray-400">
+              {isUpdatingProfile ? "Uploading..." : "Tap the camera to update your photo"}
+            </p>
           </div>
-          <p className="text-sm text-gray-500">
-            {isUpdatingProfile ? "Uploading..." : "Click the edit icon to update your photo"}
-          </p>
-        </div>
 
-        <div className="mt-6 text-left space-y-3">
-          <div>
-            <p className="text-xs text-gray-500">Full Name</p>
-            <p className="font-medium">{authUser?.fullName}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-500">Email</p>
-            <p className="font-medium">{authUser?.email}</p>
+          <div className="mt-8 text-left space-y-4">
+            <div className="pb-3 border-b border-gray-100">
+              <p className="text-xs text-gray-400 mb-0.5">Full Name</p>
+              <p className="text-sm font-medium text-gray-800">{authUser?.fullName}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400 mb-0.5">Email</p>
+              <p className="text-sm font-medium text-gray-800">{authUser?.email}</p>
+            </div>
           </div>
         </div>
       </div>

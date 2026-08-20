@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
+import { Send } from "lucide-react";
 
 const ChatContainer = () => {
   const {
@@ -12,7 +13,7 @@ const ChatContainer = () => {
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-  const { authUser } = useAuthStore();
+  const { authUser, onlineUsers } = useAuthStore();
   const [text, setText] = useState("");
   const messageEndRef = useRef(null);
 
@@ -39,55 +40,73 @@ const ChatContainer = () => {
 
   if (!selectedUser) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-400">
-        Select a user to start chatting
+      <div className="flex-1 flex flex-col items-center justify-center bg-[#f7f8f6] text-gray-400">
+        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+          <Send className="w-6 h-6 text-gray-300" />
+        </div>
+        <p className="text-sm">Select a contact to start chatting</p>
       </div>
     );
   }
 
-  return (
-    <div className="flex-1 flex flex-col h-screen">
-      <div className="p-4 border-b font-bold">{selectedUser.fullName}</div>
+  const isOnline = onlineUsers.includes(selectedUser._id);
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+  return (
+    <div className="flex-1 flex flex-col h-screen bg-[#f7f8f6]">
+      <div className="px-5 py-3 border-b border-gray-200 bg-white flex items-center gap-3">
+        <img
+          src={selectedUser.profilePic || "/avatar.png"}
+          alt={selectedUser.fullName}
+          className="w-9 h-9 rounded-full object-cover"
+        />
+        <div>
+          <p className="font-medium text-sm text-gray-800">{selectedUser.fullName}</p>
+          <p className={`text-xs ${isOnline ? "text-[#25D366]" : "text-gray-400"}`}>
+            {isOnline ? "Online" : "Offline"}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2">
         {isMessagesLoading ? (
-          <p className="text-gray-400">Loading messages...</p>
+          <p className="text-sm text-gray-400">Loading messages...</p>
+        ) : messages.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center mt-10">No messages yet — say hi 👋</p>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message._id}
-              className={`flex ${
-                message.senderId === authUser._id ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
-                  message.senderId === authUser._id
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                {message.text}
+          messages.map((message) => {
+            const isMine = message.senderId === authUser._id;
+            return (
+              <div key={message._id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-xs md:max-w-sm px-3.5 py-2 rounded-2xl text-sm leading-relaxed ${
+                    isMine
+                      ? "bg-[#DCF8C6] text-gray-800 rounded-br-sm"
+                      : "bg-white text-gray-800 rounded-bl-sm shadow-sm"
+                  }`}
+                >
+                  {message.text}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messageEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="p-4 border-t flex gap-2">
+      <form onSubmit={handleSend} className="px-4 py-3 border-t border-gray-200 bg-white flex gap-2">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 border rounded-md px-3 py-2"
+          placeholder="Type a message"
+          className="flex-1 bg-[#f0f2f0] rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#25D366]/40"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          disabled={!text.trim()}
+          className="w-10 h-10 rounded-full bg-[#075E54] flex items-center justify-center text-white hover:bg-[#064840] transition-colors disabled:opacity-40"
         >
-          Send
+          <Send className="w-4 h-4" />
         </button>
       </form>
     </div>
